@@ -6,9 +6,9 @@ import win_unicode_console, os
 win_unicode_console.enable()
 
 if __name__ == '__main__':
-    train_data_path = '.\\TestData'
+    train_data_path = '.\\TrainData'
     validation_data_path = '.\\ValidationData'
-    test_data_path = '.\\ValidationData'
+    test_data_path = '.\\TestData'
     itertime = 10
             
     sess = tf.InteractiveSession()

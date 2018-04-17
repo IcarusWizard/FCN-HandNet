@@ -4,17 +4,33 @@ import tensorflow as tf
 import tensorlayer as tl
 import win_unicode_console, os
 import matplotlib.pyplot as plt
+import numpy as np
 win_unicode_console.enable()
 
 if __name__ == '__main__':
-    test_data_path = '.\\ValidationData'
+    test_data_path = '.\\TestData'
 
     sess = tf.InteractiveSession()
 
     train_op, img, label, stage, loss, acc = FCN_Handnet()
 
     saver = tf.train.Saver()
-    saver.restore(sess, './Model/model.ckpt-2620')
+    saver.restore(sess, './Model/model.ckpt-52470')
+
+    m = 0
+    loss_total = [0, 0, 0]
+    acc_total = [np.zeros(6), np.zeros(6), np.zeros(6)]
+    for img_batch, label_batch in batch_data(test_data_path, 32):
+        m += img_batch.shape[0]
+        loss_val, acc_val = sess.run([loss, acc], feed_dict={img : img_batch, label : label_batch})
+        loss_total = [loss_total[i] + loss_val[i] for i in range(3)]
+        acc_total = [acc_total[i] + acc_val[i] for i in range(3)]
+
+    loss_total = [loss_total[i] / m for i in range(3)]
+    acc_total = [acc_total[i] / m for i in range(3)]
+    print("In %d Test:" % m)
+    print("loss = ", loss_total)
+    print("acc = ", acc_total)
 
     for img_batch, label_batch in batch_data(test_data_path, 1):
         stage_val = sess.run(stage, feed_dict={img : img_batch, label : label_batch})
