@@ -39,7 +39,7 @@ def norm(A):
     min_val = np.min(A)
     return (A - min_val) / (max_val - min_val)
 
-def build_dataset(input_folder, output_folder, data_name, maxExamples = 2000):
+def build_dataset(input_folder, output_folder, data_name, *, maxExamples = 2000, img_size = (48, 48), kernal_size = (7, 7)):
     data_path = os.path.join(input_folder, data_name)
     output_path = os.path.join(output_folder, data_name)
     if not os.path.exists(output_path):
@@ -78,7 +78,7 @@ def build_dataset(input_folder, output_folder, data_name, maxExamples = 2000):
             _depth = depth * (segmap / 255)
             sub_depth = _depth[bb_index[0] : bb_index[1], bb_index[2] : bb_index[3]]
             try:
-                sub_depth = misc.imresize(sub_depth, (96, 96))
+                sub_depth = misc.imresize(sub_depth, img_size)
             except:
                 print('No. %d fail because of resize' %(j + 1))
                 continue
@@ -91,14 +91,14 @@ def build_dataset(input_folder, output_folder, data_name, maxExamples = 2000):
                 img = hmap[:,:,k]
                 img = img[bb_index[0] : bb_index[1], bb_index[2] : bb_index[3]]
                 try:
-                    img = misc.imresize(img, (96,96))
+                    img = misc.imresize(img, img_size)
                 except:
                     something_wrong = True
                     break
                 
-                tem = np.zeros((96,96))
+                tem = np.zeros(img_size)
                 tem[np.unravel_index(np.argmax(img), img.shape)] = 1
-                tem = norm(cv2.GaussianBlur(tem,(7,7),0)) #kernal is chageable
+                tem = norm(cv2.GaussianBlur(tem, kernal_size, 0)) #kernal is chageable
                 hmap_list.append(tem[:,:,np.newaxis])
 
             if something_wrong:
