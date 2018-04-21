@@ -6,11 +6,22 @@ from scipy.io import loadmat
 from random import shuffle
 import cv2
 
+def loadFromH5(filename, keys):
+    result = []
+    h5file = h5py.File(filename, 'r')
+    for key in keys:
+        result.append(h5file[key].value)
+    h5file.close()
+    return result
+
+def buileToH5(filename, datas):
+    h5file = h5py.File(filename, 'w')
+    for key, data in datas:
+        h5file.create_dataset(key, data=data)
+    h5file.close()
+
 def imgshow_h5(filename):
-    f = h5py.File(filename)
-    data = f['whole_hand'][:]
-    fingers = f['every_finger'][:]
-    f.close()
+    data, fingers = loadFromH5(filename, ['whole_hand', 'every_finger'])
     print(data.shape)
     print(fingers.shape)
     img = data[0,:,:,0]
@@ -78,9 +89,9 @@ def build_dataset(input_folder, output_folder, data_name, *, maxExamples = 2000,
             _depth = depth * (segmap / 255)
             sub_depth = _depth[bb_index[0] : bb_index[1], bb_index[2] : bb_index[3]]
             try:
-                sub_depth = misc.imresize(sub_depth, img_size)
+                sub_depth = cv2.resize(sub_depth, img_size)
             except:
-                print('No. %d fail because of resize' %(j + 1))
+                print('No. %d fail because of resize' %(j + 1), sub_depth.shape)
                 continue
             sub_depth = norm(sub_depth)
             sub_depth = sub_depth[:,:,np.newaxis]
@@ -91,7 +102,7 @@ def build_dataset(input_folder, output_folder, data_name, *, maxExamples = 2000,
                 img = hmap[:,:,k]
                 img = img[bb_index[0] : bb_index[1], bb_index[2] : bb_index[3]]
                 try:
-                    img = misc.imresize(img, img_size)
+                    img = cv2.resize(img, img_size)
                 except:
                     something_wrong = True
                     break
@@ -102,7 +113,7 @@ def build_dataset(input_folder, output_folder, data_name, *, maxExamples = 2000,
                 hmap_list.append(tem[:,:,np.newaxis])
 
             if something_wrong:
-                print('No. %d fail because of resize' % (j + 1))
+                print('No. %d fail because of resize' % (j + 1), img.shape)
                 continue
             sub_hmap = np.concatenate(hmap_list, axis=2)
 
@@ -118,27 +129,22 @@ def build_dataset(input_folder, output_folder, data_name, *, maxExamples = 2000,
         whole_hand = np.concatenate(whole_hand, axis=0)
         every_finger = np.concatenate(every_finger, axis=0)
 
-        file = h5py.File(filename, 'w')
-        file.create_dataset('num', data=cot)
-        file.create_dataset('whole_hand', data=whole_hand)
-        file.create_dataset('every_finger', data=every_finger)
-        file.close()
-        print('finish ' + filename + ' with %d in %d' % (cot, m))
+        dicts = {'num' : cot, 'whole_hand' : whole_hand, 'every_finger' : every_finger}
+        buileToH5(filename, dicts)
+        print('finish ' + filename + ' with %d in %d' % (cot, m))  
 
 def batch_data(path, batch_size = 32):
     l = os.listdir(path)
     shuffle(l)
     for name in l:
         print('in file ' + name)
-        h5file = h5py.File(os.path.join(path, name), 'r')
-        num = h5file['num'].value #there is only one data in this dataset
+        num, img, label = loadFromH5(os.path.join(path, name), ['num', 'whole_hand', 'every_finger'])
         
         index = list(range(num))
         shuffle(index)
 
-        img = h5file['whole_hand'][:][index]
-        label = h5file['every_finger'][:][index]
-
+        img = img[index]
+        label = label[index]
 
         for i in range(num // batch_size + int(num % batch_size != 0)):
             head = i * batch_size
