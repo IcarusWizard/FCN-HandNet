@@ -1,5 +1,6 @@
 from datatools import batch_data
 from model import FCN_Handnet
+from modeltools import findStep
 import tensorflow as tf
 import tensorlayer as tl
 import win_unicode_console, os
@@ -17,12 +18,13 @@ if __name__ == '__main__':
 
     saver = tf.train.Saver()
 
-    if os.path.exists('Model'):
-        saver.restore(sess, './Model/model.ckpt')
+    step = findStep('Model')
+    
+    if not step == 0:
+        saver.restore(sess, './Model/model.ckpt-' + str(step))
     else:
         sess.run(tf.initialize_all_variables())
 
-    step = 0
     for it in range(itertime):
         print('No.%d iteration' % (it + 1))
 
