@@ -1,6 +1,6 @@
-import os
-import re
+import os, re
 import matplotlib.pyplot as plt
+from datatools import loadFromH5
 
 def findStep(modelpath):
     if not os.path.exists(modelpath) or len(os.listdir(modelpath)) == 0:
@@ -32,3 +32,15 @@ def drawResult(img, stage):
     plt.imshow(stage[:,:,4])
     plt.subplot(2,6,12)
     plt.imshow(stage[:,:,5]) 
+
+def drawMerit(filename = 'merit.h5'):
+    step, loss, acc = loadFromH5(filename, ['step', 'loss', 'acc'])
+    plt.figure()
+    for i in range(3):
+        plt.plot(step, loss[:,i])
+    plt.figure()
+    for j in range(6):
+        plt.subplot(2, 3, j + 1)
+        for i in range(3):
+            plt.plot(step, acc[:,i*3+j])
+    plt.show()
