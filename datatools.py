@@ -14,9 +14,11 @@ def loadFromH5(filename, keys):
     h5file.close()
     return result
 
-def buileToH5(filename, datas):
+def buileToH5(filename, datas, overWrite = True):
+    if overWrite and os.path.exists(filename):
+        os.system('del ' + filename)
     h5file = h5py.File(filename, 'w')
-    for key, data in datas:
+    for key, data in datas.items():
         h5file.create_dataset(key, data=data)
     h5file.close()
 
