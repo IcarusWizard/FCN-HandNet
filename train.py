@@ -12,7 +12,7 @@ if __name__ == '__main__':
     validation_data_path = '.\\ValidationData'
     test_data_path = '.\\TestData'
     meritname = 'merit.h5'
-    itertime = 10
+    itertime = 50
 
     if os.path.exists(meritname):
         step_vec, loss_vec, acc_vec = loadFromH5(meritname, ['step', 'loss', 'acc'])
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     
     sess = tf.InteractiveSession()
 
-    train_op, img, label, stage, loss, acc = FCN_Handnet()
+    train_op, img, label, features, stage, loss, acc = FCN_Handnet()
 
     saver = tf.train.Saver()
 

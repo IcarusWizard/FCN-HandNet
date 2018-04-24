@@ -1,4 +1,5 @@
 import os, re
+import numpy as np
 import matplotlib.pyplot as plt
 from datatools import loadFromH5
 
@@ -20,17 +21,17 @@ def drawResult(img, stage):
     plt.figure()
     plt.subplot(1,2,1)
     plt.imshow(img, cmap=plt.cm.gray)
-    plt.subplot(2,6,4)
+    plt.subplot(3,4,3)
     plt.imshow(stage[:,:,0])
-    plt.subplot(2,6,5)
+    plt.subplot(3,4,4)
     plt.imshow(stage[:,:,1])
-    plt.subplot(2,6,6)
+    plt.subplot(3,4,7)
     plt.imshow(stage[:,:,2])
-    plt.subplot(2,6,10)
+    plt.subplot(3,4,8)
     plt.imshow(stage[:,:,3])
-    plt.subplot(2,6,11)
+    plt.subplot(3,4,11)
     plt.imshow(stage[:,:,4])
-    plt.subplot(2,6,12)
+    plt.subplot(3,4,12)
     plt.imshow(stage[:,:,5]) 
 
 def drawMerit(filename = 'merit.h5'):
@@ -44,3 +45,13 @@ def drawMerit(filename = 'merit.h5'):
         for i in range(3):
             plt.plot(step, acc[:,i*3+j])
     plt.show()
+
+def drawFeatures(fetures):
+    size = fetures.shape[2]
+    base = int(np.log2(size))
+    rows = 2 ** (base // 2)
+    cols = 2 ** (base // 2 + base % 2)
+    plt.figure()
+    for i in range(size):
+        plt.subplot(rows, cols, i+1)
+        plt.imshow(fetures[:,:,i])

@@ -9,14 +9,15 @@ import numpy as np
 win_unicode_console.enable()
 
 if __name__ == '__main__':
-    test_data_path = '.\\ValidationData'
+    test_data_path = '.\\TestData'
 
     sess = tf.InteractiveSession()
 
-    train_op, img, label, stage, loss, acc = FCN_Handnet()
+    train_op, img, label, features, stage, loss, acc = FCN_Handnet(acc_range=3)
 
     saver = tf.train.Saver()
     saver.restore(sess, './Model/model.ckpt-' + str(findStep('Model')))
+    drawMerit()
 
     m = 0
     loss_total = [0, 0, 0]
@@ -34,9 +35,10 @@ if __name__ == '__main__':
     print("acc = ", acc_total)
 
     for img_batch, label_batch in batch_data(test_data_path, 1):
-        stage_val = sess.run(stage, feed_dict={img : img_batch, label : label_batch})
+        features_val, stage_val = sess.run([features, stage], feed_dict={img : img_batch, label : label_batch})
         img_batch = img_batch[0,:,:,0]
         label_batch = label_batch[0]
+        drawFeatures(features_val[0])
         drawResult(img_batch, label_batch)     
         for _stage in stage_val:
             _stage = _stage[0]
