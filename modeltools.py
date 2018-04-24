@@ -1,7 +1,7 @@
 import os, re
 import numpy as np
 import matplotlib.pyplot as plt
-from datatools import loadFromH5
+from datatools import loadFromH5, smoothFilter
 
 def findStep(modelpath):
     if not os.path.exists(modelpath) or len(os.listdir(modelpath)) == 0:
@@ -38,12 +38,12 @@ def drawMerit(filename = 'merit.h5'):
     step, loss, acc = loadFromH5(filename, ['step', 'loss', 'acc'])
     plt.figure()
     for i in range(3):
-        plt.plot(step, loss[:,i])
+        plt.plot(step, smoothFilter(loss[:,i]))
     plt.figure()
     for j in range(6):
         plt.subplot(2, 3, j + 1)
         for i in range(3):
-            plt.plot(step, acc[:,i*3+j])
+            plt.plot(step, smoothFilter(acc[:,i*3+j]))
     plt.show()
 
 def drawFeatures(fetures):

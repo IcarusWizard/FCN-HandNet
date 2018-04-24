@@ -152,3 +152,16 @@ def batch_data(path, batch_size = 32):
             head = i * batch_size
             rear = min(num, (i + 1) * batch_size)
             yield img[head : rear], label[head : rear]
+
+def smoothFilter(data, n = 30):
+    result = []
+    sum = 0
+    for i in range(data.shape[0]):
+        if (i < n):
+            sum += data[i]
+            result.append(sum / (i + 1))
+        else:
+            sum += data[i]
+            sum -= data[i-n]
+            result.append(sum / n)
+    return np.array(result)
