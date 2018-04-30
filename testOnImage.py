@@ -19,6 +19,7 @@ if __name__ == '__main__':
     
     for name in filter(lambda name: search.match(name), os.listdir(folder)):
         testimg = plt.imread(os.path.join(folder, name))
+        testimg = testimg[:,:,0]
         #testimg = testimg[:,-1::-1] #swap if need
         testimg = norm(testimg.reshape((48,48,1)))
         testimg = testimg[np.newaxis]

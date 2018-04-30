@@ -18,5 +18,5 @@ if __name__ == '__main__':
             img = cv2.dilate(img, np.ones((3,3)))
             img = cv2.resize(img, (48,48))
             img = norm(img)
-            plt.imsave('Test_%d.png' % i, img, cmap=plt.cm.gray)
+            plt.imsave('Test_%d.png' % i, img, format='png', cmap=plt.cm.gray)
             i = i + 1
