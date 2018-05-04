@@ -3,7 +3,7 @@ from model import FCN_Handnet
 from modeltools import *
 import tensorflow as tf
 import tensorlayer as tl
-import win_unicode_console, os, cv2, re
+import win_unicode_console, os, cv2, re, time
 import matplotlib.pyplot as plt
 import numpy as np
 win_unicode_console.enable()
@@ -23,7 +23,9 @@ if __name__ == '__main__':
         #testimg = testimg[:,-1::-1] #swap if need
         testimg = norm(testimg.reshape((48,48,1)))
         testimg = testimg[np.newaxis]
+        starttime = time.time()
         features_val, stage_val = sess.run([features, stage], feed_dict={img : testimg})
+        print((time.time() - starttime) * 1000)
         testimg = testimg[0,:,:,0]
         drawFeatures(features_val[0])    
         for _stage in stage_val:
