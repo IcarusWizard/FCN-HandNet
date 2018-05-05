@@ -5,6 +5,6 @@ def clean(search, path = '.\\'):
         os.system('del ' + os.path.join(path, name))
 
 if __name__ == '__main__':
-    to_del = [r'Flooded_(\d*).png', r'Test_(\d*)..*']
+    to_del = [r'Flooded_(\d*).png', r'Test_(\d*)..*', r'.*.png']
     for search in [re.compile(r) for r in to_del]:
         clean(search)

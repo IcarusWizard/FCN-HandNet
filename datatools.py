@@ -91,7 +91,7 @@ def build_dataset(input_folder, output_folder, data_name, *, maxExamples = 2000,
             _depth = depth * (segmap / 255)
             sub_depth = _depth[bb_index[0] : bb_index[1], bb_index[2] : bb_index[3]]
             try:
-                sub_depth = cv2.resize(sub_depth, img_size)
+                sub_depth = cv2.resize(sub_depth, img_size, interpolation=cv2.INTER_NEAREST)
             except:
                 print('No. %d fail because of resize' %(j + 1), sub_depth.shape)
                 continue
@@ -104,7 +104,7 @@ def build_dataset(input_folder, output_folder, data_name, *, maxExamples = 2000,
                 img = hmap[:,:,k]
                 img = img[bb_index[0] : bb_index[1], bb_index[2] : bb_index[3]]
                 try:
-                    img = cv2.resize(img, img_size)
+                    img = cv2.resize(img, img_size, interpolation=cv2.INTER_NEAREST)
                 except:
                     something_wrong = True
                     break
