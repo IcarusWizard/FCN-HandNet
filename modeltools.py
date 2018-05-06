@@ -34,17 +34,36 @@ def drawResult(img, stage):
     plt.subplot(3,4,12)
     plt.imshow(stage[:,:,5]) 
 
-def drawMerit(filename = 'merit.h5'):
+def drawMerit(*, filename = 'merit.h5', show = True):
     step, loss, acc = loadFromH5(filename, ['step', 'loss', 'acc'])
-    plt.figure()
-    for i in range(3):
-        plt.plot(step, smoothFilter(loss[:,i]))
-    plt.figure()
-    for j in range(6):
-        plt.subplot(2, 3, j + 1)
+    if show:
+        plt.figure()
         for i in range(3):
-            plt.plot(step, smoothFilter(acc[:,i*3+j]))
-    plt.show()
+            plt.plot(step, smoothFilter(loss[:,i]))
+        plt.figure()
+        for j in range(6):
+            plt.subplot(2, 3, j + 1)
+            for i in range(3):
+                plt.plot(step, smoothFilter(acc[:,i*3+j]))
+        plt.show()
+    else:
+        names = ['Thumb', 'Index', 'Middle', 'Ring', 'Small', 'Palm']
+        plt.figure()
+        for i in range(3):
+            plt.plot(step, smoothFilter(loss[:,i]))
+        plt.xlabel('Train Step')
+        plt.ylabel('MSE Loss')
+        plt.title('Loss')
+        plt.savefig('Loss.png')
+        for j in range(6):
+            plt.figure()
+            for i in range(3):
+                plt.plot(step, smoothFilter(acc[:,i*3+j]))
+            plt.xlabel('Train Step')
+            plt.ylabel('Acc')
+            plt.title(names[j])
+            plt.savefig(names[j] + '.png')
+        
 
 def drawFeatures(fetures):
     size = fetures.shape[2]

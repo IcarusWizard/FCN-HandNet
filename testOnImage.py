@@ -25,7 +25,7 @@ if __name__ == '__main__':
         testimg = testimg[np.newaxis]
         starttime = time.time()
         features_val, stage_val = sess.run([features, stage], feed_dict={img : testimg})
-        print((time.time() - starttime) * 1000)
+        print("time cost: %.2f ms"%((time.time() - starttime) * 1000))
         testimg = testimg[0,:,:,0]
         drawFeatures(features_val[0])    
         for _stage in stage_val:
