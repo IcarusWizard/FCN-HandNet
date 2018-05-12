@@ -2,6 +2,20 @@ import os, re
 import numpy as np
 import matplotlib.pyplot as plt
 from datatools import loadFromH5, smoothFilter
+from matplotlib.font_manager import FontProperties
+from matplotlib import rc
+
+font = FontProperties()
+font.set_family('serif')
+font.set_name('Times New Roman')
+font.set_style('italic')
+font.set_size(20)
+
+font_title = FontProperties()
+font_title.set_family('serif')
+font_title.set_name('Times New Roman')
+font_title.set_style('italic')
+font_title.set_size(25)
 
 def findStep(modelpath):
     if not os.path.exists(modelpath) or len(os.listdir(modelpath)) == 0:
@@ -47,22 +61,33 @@ def drawMerit(*, filename = 'merit.h5', show = True):
                 plt.plot(step, smoothFilter(acc[:,i*3+j]))
         plt.show()
     else:
+        if not os.path.exists('merit'):
+            os.mkdir('merit')
         names = ['Thumb', 'Index', 'Middle', 'Ring', 'Small', 'Palm']
-        plt.figure()
+        colors = ['b', 'g', 'r']
+        fig, ax = plt.subplots(constrained_layout=True)
         for i in range(3):
-            plt.plot(step, smoothFilter(loss[:,i]))
-        plt.xlabel('Train Step')
-        plt.ylabel('MSE Loss')
-        plt.title('Loss')
-        plt.savefig('Loss.png')
+            ax.plot(step, smoothFilter(loss[:,i]), colors[i])
+        ax.set_xlabel('Train Step', fontproperties=font)
+        ax.set_ylabel('MSE Loss', fontproperties=font)
+        ax.set_title('Loss', fontproperties=font_title)
+        ax.axis([0, 300000, 4, 18])
+        axis = fig.axes[0]
+        axis.tick_params(labelsize=15)
+        ax.grid()
+        fig.savefig('merit/' + 'Loss.png')
         for j in range(6):
-            plt.figure()
+            fig, ax = plt.subplots(constrained_layout=True)
             for i in range(3):
-                plt.plot(step, smoothFilter(acc[:,i*3+j]))
-            plt.xlabel('Train Step')
-            plt.ylabel('Acc')
-            plt.title(names[j])
-            plt.savefig(names[j] + '.png')
+                ax.plot(step, smoothFilter(acc[:,i*3+j]), colors[i])
+            ax.set_xlabel('Train Step', fontproperties=font)
+            ax.set_ylabel('Acc', fontproperties=font)
+            ax.set_title(names[j], fontproperties=font_title)
+            ax.axis([0, 300000, 0, 1])
+            axis = fig.axes[0]
+            axis.tick_params(labelsize=15)
+            ax.grid()
+            fig.savefig('merit/' + names[j] + '.png')
         
 
 def drawFeatures(fetures):
@@ -74,3 +99,6 @@ def drawFeatures(fetures):
     for i in range(size):
         plt.subplot(rows, cols, i+1)
         plt.imshow(fetures[:,:,i])
+
+if __name__ == '__main__':
+    drawMerit(show=False)
