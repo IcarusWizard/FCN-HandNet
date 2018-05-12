@@ -86,6 +86,8 @@ if __name__ == '__main__':
         acc_range, validation, test = loadFromH5(filename, ['acc_range', 'ValidationData', 'TestData'])
         acc = np.concatenate([validation[np.newaxis], test[np.newaxis]], axis=0)
         for i in range(2):
+            if not os.path.exists(os.path.join(output_path, datasets[i])):
+                os.mkdir(os.path.join(output_path, datasets[i]))
             for j in range(6):
                 fig, ax = plt.subplots(constrained_layout=True)
                 for k in range(3):
@@ -93,7 +95,7 @@ if __name__ == '__main__':
                 ax.set_xlabel('Acc Range: R', fontproperties=font_axis)
                 ax.set_ylabel('Acc', fontproperties=font_axis)
                 ax.set_title(names[j], fontproperties=font_title)
-                ax.axis([0, 15, 0, 1])
+                ax.axis([0, 14, 0, 1])
                 axis = fig.axes[0]
                 axis.tick_params(labelsize=15)
                 ax.grid()
