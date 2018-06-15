@@ -26,7 +26,7 @@ if __name__ == '__main__':
     
     sess = tf.InteractiveSession()
 
-    train_op, img, label, features, stage, loss, acc = FCN_Handnet()
+    train_op, img, label, features, stage, loss, acc, correct = FCN_Handnet()
 
     saver = tf.train.Saver()
 

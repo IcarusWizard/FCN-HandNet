@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
         sess = tf.InteractiveSession()
 
-        train_op, img, label, features, stage, loss, acc = FCN_Handnet(acc_range=3)
+        train_op, img, label, features, stage, loss, acc, correct = FCN_Handnet(acc_range=3)
 
         saver = tf.train.Saver()
         saver.restore(sess, './Model/model.ckpt-' + str(findStep('Model')))

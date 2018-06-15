@@ -10,7 +10,7 @@ def argmax2D(tensor, imgsize = 48):
 def stage_acc(stage, label_x, label_y, imgsize = 48, acc_range = 3):
     stage_x, stage_y = argmax2D(stage, imgsize)
     correct = tf.sqrt(tf.cast((label_x - stage_x) ** 2 + (label_y - stage_y) ** 2, 'float')) <= acc_range
-    return tf.reduce_sum(tf.cast(correct, 'float'), 0)
+    return tf.reduce_sum(tf.cast(correct, 'float'), 0), correct
 
 def FCN_Handnet(imgsize = 48, acc_range = 3):
     img = tf.placeholder(tf.float32, shape=(None, imgsize, imgsize, 1), name='img')
@@ -57,11 +57,11 @@ def FCN_Handnet(imgsize = 48, acc_range = 3):
     train_op = tf.train.AdamOptimizer(1e-4).minimize(total_loss)
 
     label_x, label_y = argmax2D(label, imgsize)
-    stage1_acc = stage_acc(stage1_output, label_x, label_y, imgsize, acc_range)
-    stage2_acc = stage_acc(stage2_output, label_x, label_y, imgsize, acc_range)
-    stage3_acc = stage_acc(stage3_output, label_x, label_y, imgsize, acc_range)
+    stage1_acc, stage1_correct = stage_acc(stage1_output, label_x, label_y, imgsize, acc_range)
+    stage2_acc, stage2_correct = stage_acc(stage2_output, label_x, label_y, imgsize, acc_range)
+    stage3_acc, stage3_correct = stage_acc(stage3_output, label_x, label_y, imgsize, acc_range)
 
-    return train_op, img, label, features, [stage1_output, stage2_output, stage3_output], [stage1_loss, stage2_loss, stage3_loss], [stage1_acc, stage2_acc, stage3_acc]
+    return train_op, img, label, features, [stage1_output, stage2_output, stage3_output], [stage1_loss, stage2_loss, stage3_loss], [stage1_acc, stage2_acc, stage3_acc], [stage1_correct, stage2_correct, stage3_correct]
 
     
 

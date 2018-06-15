@@ -13,7 +13,7 @@ if __name__ == '__main__':
     search = re.compile(r'Test_(\d*)..*')
 
     sess = tf.InteractiveSession()
-    train_op, img, label, features, stage, loss, acc = FCN_Handnet()
+    train_op, img, label, features, stage, loss, acc, correct = FCN_Handnet()
     saver = tf.train.Saver()
     saver.restore(sess, './Model/model.ckpt-' + str(findStep('Model')))
     
